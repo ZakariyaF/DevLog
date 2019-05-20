@@ -2,7 +2,7 @@
 > Developer activity logger for Android.
 
 [![Build Status](https://travis-ci.com/ZakariyaF/DevLog.svg?branch=master)](https://travis-ci.com/ZakariyaF/DevLog)
-[![codecov](https://codecov.io/gh/ZakariyaF/DevLog/branch/master/graph/badge.svg)](https://codecov.io/gh/ZakariyaF/DevLog)
+[![codecov.io](https://codecov.io/github/ZakariyaF/DevLog/branch/master/graph/badge.svg)](https://codecov.io/github/ZakariyaF/DevLog)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of contents
