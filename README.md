@@ -20,3 +20,4 @@ Add, modify and save your course and/or project progress easily!
 
 ## Status
 Project is: _in progress_
+* Next step: Implementing SQLite data persistence.
