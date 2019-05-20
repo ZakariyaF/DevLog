@@ -17,6 +17,8 @@ android:
     - extra-google-m2repository
     - extra-android-m2repository
     - addon-google_apis-google-$ANDROID_API_LEVEL
+    #emulator
+    - sys-img-${ANDROID_ABI}-${ANDROID_TARGET}
 licenses:
     - 'android-sdk-preview-license-.+'
     - 'android-sdk-license-.+'
@@ -27,4 +29,11 @@ before_script:
     - echo -e "24333f8a63b6825ea9c5514f83c2829b004d1fee" >> $ANDROID_HOME/licenses/android-sdk-license
     - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
 script:
-    - ./gradlew build check
+  - ./gradlew build jacocoTestReport assembleAndroidTest
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
+  - ./gradlew connectedCheck
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
