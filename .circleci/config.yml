@@ -60,4 +60,4 @@ jobs:
           path: app/build/test-results
           
       - codecov/upload:
-          file: {{app/build/test-results}}
+          file: {{ app/build/test-results }}
