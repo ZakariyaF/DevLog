@@ -60,4 +60,4 @@ jobs:
           path: app/build/test-results
           
       - codecov/upload:
-          path: app/build/test-results
+          file: app/build/reports/tests/testDebugUnitTest/classes/com.zakariyaf.DevLog.DataManagerTest.html
