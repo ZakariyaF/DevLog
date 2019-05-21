@@ -1,7 +1,7 @@
 # DevLog
 > Developer activity logger for Android.
 
-[![CircleCI](https://img.shields.io/circleci/build/github/ZakariyaF/DevLog/master.svg?style=svg)](https://circleci.com/gh/ZakariyaF/DevLog)
+[![CircleCI](https://img.shields.io/circleci/build/github/ZakariyaF/DevLog/master.svg)](https://circleci.com/gh/ZakariyaF/DevLog)
 [![codecov.io](https://codecov.io/github/ZakariyaF/DevLog/branch/master/graph/badge.svg)](https://codecov.io/github/ZakariyaF/DevLog)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
