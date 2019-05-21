@@ -2,7 +2,10 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-version: 2
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.0.1
 
 jobs:
   build:
@@ -56,6 +59,5 @@ jobs:
       - store_test_results:
           path: app/build/test-results
           
-      - run:
-          name: push code coverage
-          command: bash <(curl -s https://codecov.io/bash)
+      - codecov/upload:
+          file: {{ app/build/test-results }}
