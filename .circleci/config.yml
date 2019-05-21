@@ -18,9 +18,17 @@ jobs:
     working_directory: ~/code
 
     environment:
-      # Customize the JVM maximum heap limit
-      JVM_OPTS: -Xmx3200m
-      TERM: dumb
+      PATH: "~/$CIRCLE_PROJECT_REPONAME/gradle-3.4.0/bin:$PATH"
+      TERM: "dumb"
+      ADB_INSTALL_TIMEOUT: "10"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+      
+   dependencies:
+    pre:
+      - wget "https://services.gradle.org/distributions/gradle-3.4.0-bin.zip"; unzip gradle-3.4.0-bin.zip
+      - echo y | android update sdk --no-ui --all --filter tool,extra-android-m2repository,extra-android-support,extra-google-google_play_services,extra-google-m2repository,android-28
+      - echo y | android update sdk --no-ui --all --filter build-tools-28.0.3
+
 
     steps:
       - checkout
@@ -48,24 +56,21 @@ jobs:
       - run:
           name: Run UnitTest
           command: ./gradlew testDebugUnitTest
-      -run:
-          name: Start Emulator
-          # start the emulator
-          command: emulator -avd circleci-android22 -no-audio -no-window:
-                   background: true
-                   parallel: true
-      -run:
-          name: Boot Emulator
-          # wait for it to have booted
-          command: circle-android wait-for-boot
-          # unlock the emulator screen
-          sleep 30
-          adb shell input keyevent 82
-      -run:
-          name: Execute Instrumentation Test
-          # run tests  against the emulator.
-          command: ./gradlew connectedAndroidTest -PdisablePreDex
+
+test:
+  override:
+    # start the emulator
+    - emulator -avd circleci-android28 -no-audio -no-window:
+        background: true
+        parallel: true
+    # wait for it to have booted
+    - circle-android wait-for-boot
+    # unlock the emulator screen
+    - sleep 30
+    - adb shell input keyevent 82
+    # run tests  against the emulator.
+    - ./gradlew connectedAndroidTest -PdisablePreDex
     # copy the build outputs to artifacts
     - cp -r app/build/outputs $CIRCLE_ARTIFACTS
     # copy the test results to the test results directory.
-    - cp -r app/build/outputs/androidTest-results/* $CIRCLE_TEST_REPORTS
+- cp -r app/build/outputs/androidTest-results/* $CIRCLE_TEST_REPORTS
