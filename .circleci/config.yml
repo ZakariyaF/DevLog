@@ -5,12 +5,6 @@
 version: 2
 jobs:
   build:
-    # request codecov to detect CI environment to pass through to docker
-    ci_env=`bash <(curl -s https://codecov.io/env)`
-    docker run $ci_env ...
-       |----- inside docker container
-       | # exec tests
-       | bash <(curl -s https://codecov.io/bash)
     docker:
       # specify the version you desire here
       - image: circleci/android:api-28
