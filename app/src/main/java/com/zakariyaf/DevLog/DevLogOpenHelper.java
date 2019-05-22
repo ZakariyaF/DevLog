@@ -1,0 +1,34 @@
+package com.zakariyaf.DevLog;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+
+public class DevLogOpenHelper extends SQLiteOpenHelper {
+
+    public static final String DATABASE_NAME = "DevLog.db";
+    public static final int DATABASE_VERSION = 1;
+    public DevLogOpenHelper(@Nullable Context context) {
+        /*
+        Don't customize the DB behavior so set the CursorFactory parameter to null
+        Also, replace the name and version parameters with the constants from this class
+        Then remove those three parameters from the constructor and keep context only.
+         */
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        //Create the "CourseInfo" table
+        db.execSQL(DevLogDBContract.CourseInfoEntry.SQL_CREATE_TABLE);
+        //Create the "ProjectInfo" table
+        db.execSQL(DevLogDBContract.ProjectInfoEntry.SQL_CREATE_TABLE);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+}
