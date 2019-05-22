@@ -25,6 +25,10 @@ public class DevLogOpenHelper extends SQLiteOpenHelper {
         db.execSQL(DevLogDBContract.CourseInfoEntry.SQL_CREATE_TABLE);
         //Create the "ProjectInfo" table
         db.execSQL(DevLogDBContract.ProjectInfoEntry.SQL_CREATE_TABLE);
+        //Add sample data to the DB
+        DBDataWorker dbDataWorker = new DBDataWorker(db);
+        dbDataWorker.insertCourses();
+        dbDataWorker.insertSampleProjects();
     }
 
     @Override
