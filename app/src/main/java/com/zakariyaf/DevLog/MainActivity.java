@@ -2,6 +2,7 @@ package com.zakariyaf.DevLog;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -36,12 +37,16 @@ public class MainActivity extends AppCompatActivity
     private CourseRecyclerAdapter mCourseRecyclerAdapter;
     private GridLayoutManager mCoursesLayoutManager;
 
+    private DevLogOpenHelper mDBOpenHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mDBOpenHelper = new DevLogOpenHelper(MainActivity.this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +112,7 @@ public class MainActivity extends AppCompatActivity
         mRecyclerItems.setLayoutManager(mProjectsLayoutManager);
         mRecyclerItems.setAdapter(mProjectRecyclerAdapter);
 
+        SQLiteDatabase db = mDBOpenHelper.getReadableDatabase();
         selectNavigationMenuItem(R.id.nav_projects);
     }
 
@@ -188,5 +194,11 @@ public class MainActivity extends AppCompatActivity
     private void handleSelection(int message_id) {
         View view = findViewById(R.id.list_items);
         Snackbar.make(view, message_id, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mDBOpenHelper.close();
+        super.onDestroy();
     }
 }
