@@ -37,13 +37,37 @@ public class DataManager {
         Cursor courseCursor = db.query(CourseInfoEntry.TABLE_NAME, courseColumns,
                 null, null, null, null, null);
         loadCoursesFromDatabase(courseCursor);
+
         String[] projectColumns = {
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE,
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE,
                 ProjectInfoEntry.COLUMN_COURSE_ID};
         Cursor projectCursor = db.query(ProjectInfoEntry.SQL_CREATE_TABLE, projectColumns,
                 null, null, null, null, null);
+        loadProjectsFromDatabase(projectCursor);
 
+    }
+
+    private static void loadProjectsFromDatabase(Cursor cursor) {
+        int projectTitlePos = cursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
+        int projectTextPos = cursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
+        int courseIdPos = cursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
+
+        DataManager dataManager = DataManager.getInstance();
+        dataManager.mProjects.clear();
+
+        //make sure to move one step ahead before accessing the row
+        while (cursor.moveToNext()) {
+            String projectTitle = cursor.getString(projectTitlePos);
+            String projectText = cursor.getString(projectTextPos);
+            String courseId = cursor.getString(courseIdPos);
+
+            CourseInfo projectCourse = dataManager.getCourse(courseId);
+            ProjectInfo project = new ProjectInfo(projectCourse, projectTitle, projectText);
+
+            dataManager.mProjects.add(project);
+        }
+        cursor.close();
     }
 
     private static void loadCoursesFromDatabase(Cursor cursor) {
