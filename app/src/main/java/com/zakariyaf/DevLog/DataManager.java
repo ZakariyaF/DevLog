@@ -1,5 +1,10 @@
 package com.zakariyaf.DevLog;
 
+import android.database.sqlite.SQLiteDatabase;
+
+import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
+import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +20,29 @@ public class DataManager {
     public static DataManager getInstance() {
         if (ourInstance == null) {
             ourInstance = new DataManager();
-            ourInstance.initializeCourses();
-            ourInstance.initializeExampleProjects();
+            //use the DB data instead, through "loadDataFromDatabase"
+            //ourInstance.initializeCourses();
+            //ourInstance.initializeExampleProjects();
         }
         return ourInstance;
+    }
+
+    public static void loadFromDatabase(DevLogOpenHelper dbHelper) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] courseColumns = {
+                CourseInfoEntry.COLUMN_COURSE_ID,
+                CourseInfoEntry.COLUMN_COURSE_TITLE};
+        db.query(CourseInfoEntry.TABLE_NAME, courseColumns,
+                null, null, null, null, null);
+
+        String[] projectColumns = {
+                ProjectInfoEntry.COLUMN_PROJECT_TITLE,
+                ProjectInfoEntry.COLUMN_PROJECT_TITLE,
+                ProjectInfoEntry.COLUMN_COURSE_ID};
+        db.query(ProjectInfoEntry.SQL_CREATE_TABLE, projectColumns,
+                null, null, null, null, null);
+
     }
 
     public String getCurrentUserName() {
