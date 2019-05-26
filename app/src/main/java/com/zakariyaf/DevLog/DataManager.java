@@ -1,5 +1,6 @@
 package com.zakariyaf.DevLog;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
@@ -33,16 +34,33 @@ public class DataManager {
         String[] courseColumns = {
                 CourseInfoEntry.COLUMN_COURSE_ID,
                 CourseInfoEntry.COLUMN_COURSE_TITLE};
-        db.query(CourseInfoEntry.TABLE_NAME, courseColumns,
+        Cursor courseCursor = db.query(CourseInfoEntry.TABLE_NAME, courseColumns,
                 null, null, null, null, null);
-
+        loadCoursesFromDatabase(courseCursor);
         String[] projectColumns = {
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE,
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE,
                 ProjectInfoEntry.COLUMN_COURSE_ID};
-        db.query(ProjectInfoEntry.SQL_CREATE_TABLE, projectColumns,
+        Cursor projectCursor = db.query(ProjectInfoEntry.SQL_CREATE_TABLE, projectColumns,
                 null, null, null, null, null);
 
+    }
+
+    private static void loadCoursesFromDatabase(Cursor cursor) {
+        int courseIdPos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_ID);
+        int courseTitlePos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_TITLE);
+
+        DataManager dataManager = getInstance();
+        dataManager.mCourses.clear();
+        //make sure to move the cursor one step before accessing the row:
+        while (cursor.moveToNext()) {
+            String courseId = cursor.getString(courseIdPos);
+            String courseTitle = cursor.getString(courseTitlePos);
+            CourseInfo course = new CourseInfo(courseId, courseTitle, null);
+
+            dataManager.mCourses.add(course);
+        }
+        cursor.close();
     }
 
     public String getCurrentUserName() {
