@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initializeDisplayContent() {
+        DataManager.loadFromDatabase(mDBOpenHelper);
         mRecyclerItems = (RecyclerView) findViewById(R.id.list_items);
         mProjectsLayoutManager = new LinearLayoutManager(this);
         mCoursesLayoutManager = new GridLayoutManager(this,
@@ -111,8 +112,7 @@ public class MainActivity extends AppCompatActivity
     private void displayProjects() {
         mRecyclerItems.setLayoutManager(mProjectsLayoutManager);
         mRecyclerItems.setAdapter(mProjectRecyclerAdapter);
-
-        SQLiteDatabase db = mDBOpenHelper.getReadableDatabase();
+        
         selectNavigationMenuItem(R.id.nav_projects);
     }
 
