@@ -42,7 +42,7 @@ public class DataManager {
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE,
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE,
                 ProjectInfoEntry.COLUMN_COURSE_ID};
-        Cursor projectCursor = db.query(ProjectInfoEntry.SQL_CREATE_TABLE, projectColumns,
+        Cursor projectCursor = db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
                 null, null, null, null, null);
         loadProjectsFromDatabase(projectCursor);
 
