@@ -40,7 +40,7 @@ public class DataManager {
 
         String[] projectColumns = {
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE,
-                ProjectInfoEntry.COLUMN_PROJECT_TITLE,
+                ProjectInfoEntry.COLUMN_PROJECT_TEXT,
                 ProjectInfoEntry.COLUMN_COURSE_ID};
         Cursor projectCursor = db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
                 null, null, null, null, null);
