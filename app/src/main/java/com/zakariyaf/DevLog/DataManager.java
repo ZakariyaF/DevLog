@@ -22,7 +22,7 @@ public class DataManager {
         if (ourInstance == null) {
             ourInstance = new DataManager();
             //use the DB data instead, through "loadDataFromDatabase"
-            //ourInstance.initializeCourses();
+            ourInstance.initializeCourses();
             //ourInstance.initializeExampleProjects();
         }
         return ourInstance;
