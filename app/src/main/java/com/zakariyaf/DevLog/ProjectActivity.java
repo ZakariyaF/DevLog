@@ -80,7 +80,7 @@ public class ProjectActivity extends AppCompatActivity {
         SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
 
         String courseId = "android";
-        String titleStart = "Life";
+        String titleStart = "dynamic";
         String selection = ProjectInfoEntry.COLUMN_COURSE_ID + " = ? AND " +
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE + " LIKE ?";
         String[] selectionArgs = {courseId, titleStart + "%"};
@@ -96,7 +96,7 @@ public class ProjectActivity extends AppCompatActivity {
         mCourseIdPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
         mProjectTitlePos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
         mProjectTextPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
-        //move from position -1 to position0
+        //move from position -1 to position 0
         mProjectCursor.moveToNext();
         displayProject();
     }
