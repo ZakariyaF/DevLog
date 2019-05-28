@@ -1,6 +1,9 @@
 package com.zakariyaf.DevLog;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +15,8 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
 
 import java.util.List;
 
@@ -32,6 +37,12 @@ public class ProjectActivity extends AppCompatActivity {
     private String mOriginalProjectCourseId;
     private String mOriginalProjectTitle;
     private String mOriginalProjectText;
+    private DevLogOpenHelper mDbOpenHelper;
+    private Cursor mProjectCursor;
+    private int mCourseIdPos;
+    private int mProjectTitlePos;
+    private int mProjectTextPos;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +50,8 @@ public class ProjectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_project);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mDbOpenHelper = new DevLogOpenHelper(ProjectActivity.this);
 
         mSpinnerCourses = (Spinner) findViewById(R.id.spinner_courses);
 
@@ -59,8 +72,33 @@ public class ProjectActivity extends AppCompatActivity {
         mTextProjectText = (EditText) findViewById(R.id.text_project_text);
 
         if (!mIsNewProject)
-            displayProject();
+            loadProjectData();
         Log.d(TAG, "onCreate");
+    }
+
+    private void loadProjectData() {
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+
+        String courseId = "android";
+        String titleStart = "Life";
+        String selection = ProjectInfoEntry.COLUMN_COURSE_ID + " = ? AND " +
+                ProjectInfoEntry.COLUMN_PROJECT_TITLE + " LIKE ?";
+        String[] selectionArgs = {courseId, titleStart + "%"};
+
+        String[] projectColumns = {
+                ProjectInfoEntry.COLUMN_COURSE_ID,
+                ProjectInfoEntry.COLUMN_PROJECT_TITLE,
+                ProjectInfoEntry.COLUMN_PROJECT_TEXT
+        };
+
+        mProjectCursor = db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
+                selection, selectionArgs, null, null, null);
+        mCourseIdPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
+        mProjectTitlePos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
+        mProjectTextPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
+        //move from position -1 to position0
+        mProjectCursor.moveToNext();
+        displayProject();
     }
 
     private void restoreOriginalProjectValues(Bundle savedInstanceState) {
@@ -115,11 +153,15 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     private void displayProject() {
+        String courseId = mProjectCursor.getString(mCourseIdPos);
+        String projectTitle = mProjectCursor.getString(mProjectTitlePos);
+        String projectText = mProjectCursor.getString(mProjectTextPos);
+
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
         int courseIndex = courses.indexOf(mProject.getCourse());
         mSpinnerCourses.setSelection(courseIndex);
-        mTextProjectTitle.setText(mProject.getTitle());
-        mTextProjectText.setText(mProject.getText());
+        mTextProjectTitle.setText(projectTitle);
+        mTextProjectText.setText(projectText);
     }
 
     private void readDisplayStateValues() {
@@ -198,6 +240,12 @@ public class ProjectActivity extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, text);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mDbOpenHelper.close();
+        super.onDestroy();
     }
 }
 
