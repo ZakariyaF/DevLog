@@ -35,15 +35,18 @@ public class DataManager {
                 CourseInfoEntry.COLUMN_COURSE_ID,
                 CourseInfoEntry.COLUMN_COURSE_TITLE};
         Cursor courseCursor = db.query(CourseInfoEntry.TABLE_NAME, courseColumns,
-                null, null, null, null, null);
+                null, null, null, null,
+                CourseInfoEntry.COLUMN_COURSE_TITLE + " DESC");
         loadCoursesFromDatabase(courseCursor);
 
         String[] projectColumns = {
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE,
                 ProjectInfoEntry.COLUMN_PROJECT_TEXT,
                 ProjectInfoEntry.COLUMN_COURSE_ID};
+        String projectOrderBy = ProjectInfoEntry.COLUMN_COURSE_ID + " DESC," +
+                ProjectInfoEntry.COLUMN_PROJECT_TITLE;
         Cursor projectCursor = db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
-                null, null, null, null, null);
+                null, null, null, null, projectOrderBy);
         loadProjectsFromDatabase(projectCursor);
 
     }
