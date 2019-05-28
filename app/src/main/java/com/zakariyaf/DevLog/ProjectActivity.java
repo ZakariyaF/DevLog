@@ -59,7 +59,7 @@ public class ProjectActivity extends AppCompatActivity {
         mTextProjectText = (EditText) findViewById(R.id.text_project_text);
 
         if (!mIsNewProject)
-            displayProject(mSpinnerCourses, mTextProjectTitle, mTextProjectText);
+            displayProject();
         Log.d(TAG, "onCreate");
     }
 
@@ -114,12 +114,12 @@ public class ProjectActivity extends AppCompatActivity {
         mProject.setText(mTextProjectText.getText().toString());
     }
 
-    private void displayProject(Spinner spinnerCourses, EditText textProjectTitle, EditText textProjectText) {
+    private void displayProject() {
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
         int courseIndex = courses.indexOf(mProject.getCourse());
-        spinnerCourses.setSelection(courseIndex);
-        textProjectTitle.setText(mProject.getTitle());
-        textProjectText.setText(mProject.getText());
+        mSpinnerCourses.setSelection(courseIndex);
+        mTextProjectTitle.setText(mProject.getTitle());
+        mTextProjectText.setText(mProject.getText());
     }
 
     private void readDisplayStateValues() {
@@ -184,7 +184,7 @@ public class ProjectActivity extends AppCompatActivity {
         mProject = DataManager.getInstance().getProjects().get(mProjectPosition);
 
         saveOriginalProjectValues();
-        displayProject(mSpinnerCourses, mTextProjectTitle, mTextProjectText);
+        displayProject();
         invalidateOptionsMenu();
     }
 
