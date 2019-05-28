@@ -156,9 +156,9 @@ public class ProjectActivity extends AppCompatActivity {
         String courseId = mProjectCursor.getString(mCourseIdPos);
         String projectTitle = mProjectCursor.getString(mProjectTitlePos);
         String projectText = mProjectCursor.getString(mProjectTextPos);
-
+        CourseInfo course = DataManager.getInstance().getCourse(courseId);
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
-        int courseIndex = courses.indexOf(mProject.getCourse());
+        int courseIndex = courses.indexOf(course);
         mSpinnerCourses.setSelection(courseIndex);
         mTextProjectTitle.setText(projectTitle);
         mTextProjectText.setText(projectText);
