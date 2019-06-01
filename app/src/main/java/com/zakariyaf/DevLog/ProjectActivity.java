@@ -80,7 +80,7 @@ public class ProjectActivity extends AppCompatActivity {
         SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
 
         String courseId = "android";
-        String titleStart = "dynamic";
+        String titleStart = "activity";
         String selection = ProjectInfoEntry.COLUMN_COURSE_ID + " = ? AND " +
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE + " LIKE ?";
         String[] selectionArgs = {courseId, titleStart + "%"};
