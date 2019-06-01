@@ -3,7 +3,6 @@ package com.zakariyaf.DevLog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,18 +20,18 @@ import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
 import java.util.List;
 
 public class ProjectActivity extends AppCompatActivity {
-    public static final String PROJECT_POSITION = "com.zakariyaf.DevLog.PROJECT_POSITION";
+    public static final String PROJECT_ID = "com.zakariyaf.DevLog.PROJECT_ID";
     public static final String ORIGINAL_PROJECT_COURSE_ID = "com.zakariyaf.DevLog.ORIGINAL_PROJECT_COURSE_ID";
     public static final String ORIGINAL_PROJECT_TITLE = "com.zakariyaf.DevLog.ORIGINAL_PROJECT_TITLE";
     public static final String ORIGINAL_PROJECT_TEXT = "com.zakariyaf.DevLog.ORIGINAL_PROJECT_TEXT";
-    public static final int POSITION_NOT_SET = -1;
+    public static final int ID_NOT_SET = -1;
     private final String TAG = getClass().getSimpleName();
     private ProjectInfo mProject;
     private boolean mIsNewProject;
     private Spinner mSpinnerCourses;
     private EditText mTextProjectTitle;
     private EditText mTextProjectText;
-    private int mProjectPosition;
+    private int mProjectID;
     private boolean mIsCancelling;
     private String mOriginalProjectCourseId;
     private String mOriginalProjectTitle;
@@ -81,9 +80,8 @@ public class ProjectActivity extends AppCompatActivity {
 
         String courseId = "android";
         String titleStart = "activity";
-        String selection = ProjectInfoEntry.COLUMN_COURSE_ID + " = ? AND " +
-                ProjectInfoEntry.COLUMN_PROJECT_TITLE + " LIKE ?";
-        String[] selectionArgs = {courseId, titleStart + "%"};
+        String selection = ProjectInfoEntry._ID + " = ?";
+        String[] selectionArgs = {String.valueOf(mProjectID)};
 
         String[] projectColumns = {
                 ProjectInfoEntry.COLUMN_COURSE_ID,
@@ -119,9 +117,9 @@ public class ProjectActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (mIsCancelling) {
-            Log.i(TAG, "Cancelling project at position: " + mProjectPosition);
+            Log.i(TAG, "Cancelling project at position: " + mProjectID);
             if (mIsNewProject) {
-                DataManager.getInstance().removeProject(mProjectPosition);
+                DataManager.getInstance().removeProject(mProjectID);
             } else {
                 storePreviousProjectValues();
             }
@@ -166,21 +164,21 @@ public class ProjectActivity extends AppCompatActivity {
 
     private void readDisplayStateValues() {
         Intent intent = getIntent();
-        mProjectPosition = intent.getIntExtra(PROJECT_POSITION, POSITION_NOT_SET);
-        mIsNewProject = mProjectPosition == POSITION_NOT_SET;
+        mProjectID = intent.getIntExtra(PROJECT_ID, ID_NOT_SET);
+        mIsNewProject = mProjectID == ID_NOT_SET;
         if (mIsNewProject) {
             createNewProject();
         }
 
-        Log.i(TAG, "mProjectPosition: " + mProjectPosition);
-        mProject = DataManager.getInstance().getProjects().get(mProjectPosition);
+        Log.i(TAG, "mProjectID: " + mProjectID);
+        //mProject = DataManager.getInstance().getProjects().get(mProjectID);
 
     }
 
     private void createNewProject() {
         DataManager dm = DataManager.getInstance();
-        mProjectPosition = dm.createNewProject();
-//        mProject = dm.getProjects().get(mProjectPosition);
+        mProjectID = dm.createNewProject();
+//        mProject = dm.getProjects().get(mProjectID);
     }
 
     @Override
@@ -215,15 +213,15 @@ public class ProjectActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.action_next);
         int lastProjectIndex = DataManager.getInstance().getProjects().size() - 1;
-        item.setEnabled(mProjectPosition < lastProjectIndex);
+        item.setEnabled(mProjectID < lastProjectIndex);
         return super.onPrepareOptionsMenu(menu);
     }
 
     private void moveNext() {
         saveProject();
 
-        ++mProjectPosition;
-        mProject = DataManager.getInstance().getProjects().get(mProjectPosition);
+        ++mProjectID;
+        mProject = DataManager.getInstance().getProjects().get(mProjectID);
 
         saveOriginalProjectValues();
         displayProject();
