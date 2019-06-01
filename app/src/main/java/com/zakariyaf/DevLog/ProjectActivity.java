@@ -26,7 +26,8 @@ public class ProjectActivity extends AppCompatActivity {
     public static final String ORIGINAL_PROJECT_TEXT = "com.zakariyaf.DevLog.ORIGINAL_PROJECT_TEXT";
     public static final int ID_NOT_SET = -1;
     private final String TAG = getClass().getSimpleName();
-    private ProjectInfo mProject;
+    private ProjectInfo mProject = new ProjectInfo(
+            DataManager.getInstance().getCourses().get(0), "", "");
     private boolean mIsNewProject;
     private Spinner mSpinnerCourses;
     private EditText mTextProjectTitle;
