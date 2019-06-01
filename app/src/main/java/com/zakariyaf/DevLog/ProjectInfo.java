@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public final class ProjectInfo implements Parcelable {
+
     public final static Parcelable.Creator<ProjectInfo> CREATOR =
             new Parcelable.Creator<ProjectInfo>() {
 
@@ -17,6 +18,8 @@ public final class ProjectInfo implements Parcelable {
                     return new ProjectInfo[size];
                 }
             };
+
+    private int mID;
     private CourseInfo mCourse;
     private String mTitle;
     private String mText;
@@ -27,7 +30,15 @@ public final class ProjectInfo implements Parcelable {
         mText = text;
     }
 
+    public ProjectInfo(int id, CourseInfo course, String title, String text) {
+        mID = id;
+        mCourse = course;
+        mTitle = title;
+        mText = text;
+    }
+
     private ProjectInfo(Parcel source) {
+        mID = source.readInt();
         mCourse = source.readParcelable(CourseInfo.class.getClassLoader());
         mTitle = source.readString();
         mText = source.readString();
@@ -91,5 +102,9 @@ public final class ProjectInfo implements Parcelable {
         dest.writeParcelable(mCourse, 0);
         dest.writeString(mTitle);
         dest.writeString(mText);
+    }
+
+    public int getID() {
+        return mID;
     }
 }

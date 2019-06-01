@@ -42,7 +42,8 @@ public class DataManager {
         String[] projectColumns = {
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE,
                 ProjectInfoEntry.COLUMN_PROJECT_TEXT,
-                ProjectInfoEntry.COLUMN_COURSE_ID};
+                ProjectInfoEntry.COLUMN_COURSE_ID,
+                ProjectInfoEntry._ID};
         String projectOrderBy = ProjectInfoEntry.COLUMN_COURSE_ID + " DESC," +
                 ProjectInfoEntry.COLUMN_PROJECT_TITLE;
         Cursor projectCursor = db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
@@ -55,6 +56,7 @@ public class DataManager {
         int projectTitlePos = cursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
         int projectTextPos = cursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
         int courseIdPos = cursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
+        int idPos = cursor.getColumnIndex(ProjectInfoEntry._ID);
 
         DataManager dataManager = DataManager.getInstance();
         dataManager.mProjects.clear();
@@ -64,9 +66,10 @@ public class DataManager {
             String projectTitle = cursor.getString(projectTitlePos);
             String projectText = cursor.getString(projectTextPos);
             String courseId = cursor.getString(courseIdPos);
+            int id = cursor.getInt(idPos);
 
             CourseInfo projectCourse = dataManager.getCourse(courseId);
-            ProjectInfo project = new ProjectInfo(projectCourse, projectTitle, projectText);
+            ProjectInfo project = new ProjectInfo(id, projectCourse, projectTitle, projectText);
 
             dataManager.mProjects.add(project);
         }

@@ -35,7 +35,7 @@ public class ProjectRecyclerAdapter extends RecyclerView.Adapter<ProjectRecycler
         ProjectInfo project = mProjects.get(position);
         holder.mTextCourse.setText(project.getCourse().getTitle());
         holder.mTextTitle.setText(project.getTitle());
-        holder.mCurrentPosition = position;
+        holder.mID = project.getID();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ProjectRecyclerAdapter extends RecyclerView.Adapter<ProjectRecycler
 
         public final TextView mTextCourse;
         public final TextView mTextTitle;
-        public int mCurrentPosition;
+        public int mID;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -58,7 +58,7 @@ public class ProjectRecyclerAdapter extends RecyclerView.Adapter<ProjectRecycler
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, ProjectActivity.class);
-                    intent.putExtra(ProjectActivity.PROJECT_POSITION, mCurrentPosition);
+                    intent.putExtra(ProjectActivity.PROJECT_POSITION, mID);
                     mContext.startActivity(intent);
                 }
             });
