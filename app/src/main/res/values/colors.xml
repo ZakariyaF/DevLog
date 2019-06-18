@@ -4,5 +4,5 @@
     <color name="colorPrimaryDark">#222222</color>
     <color name="colorPrimaryLight">#727272</color>
     <color name="colorAccent">@color/flavor</color>
-    <color name="flavor">#43FA00</color>
+    <color name="flavor">#45FF00</color>
 </resources>
