@@ -177,12 +177,28 @@ public class ProjectActivity extends AppCompatActivity {
         String courseId = mProjectCursor.getString(mCourseIdPos);
         String projectTitle = mProjectCursor.getString(mProjectTitlePos);
         String projectText = mProjectCursor.getString(mProjectTextPos);
-        CourseInfo course = DataManager.getInstance().getCourse(courseId);
-        List<CourseInfo> courses = DataManager.getInstance().getCourses();
-        int courseIndex = courses.indexOf(course);
+
+        int courseIndex = getIndexOfCourseId(courseId);
         mSpinnerCourses.setSelection(courseIndex);
         mTextProjectTitle.setText(projectTitle);
         mTextProjectText.setText(projectText);
+    }
+
+    private int getIndexOfCourseId(String courseId) {
+        Cursor cursor = mAdapterCourses.getCursor();
+        int courseIdPos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_ID);
+        int courseRowIndex = 0;
+
+        boolean more = cursor.moveToFirst();
+        while (more) {
+            String cursorCourseId = cursor.getString(courseIdPos);
+            if (cursorCourseId.equals(courseId)) {
+                break;
+            }
+            courseRowIndex++;
+            more = cursor.moveToNext();
+        }
+        return courseRowIndex;
     }
 
     private void readDisplayStateValues() {
