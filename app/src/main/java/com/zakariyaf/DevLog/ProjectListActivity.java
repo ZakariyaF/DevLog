@@ -47,7 +47,7 @@ public class ProjectListActivity extends AppCompatActivity {
         recyclerProjects.setLayoutManager(projectsLayoutManager);
 
         List<ProjectInfo> projects = DataManager.getInstance().getProjects();
-        mProjectRecyclerAdapter = new ProjectRecyclerAdapter(this, projects);
+        mProjectRecyclerAdapter = new ProjectRecyclerAdapter(this, null);
         recyclerProjects.setAdapter(mProjectRecyclerAdapter);
     }
 

@@ -5,23 +5,49 @@ import android.content.Intent;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
 
 import java.util.List;
 
 public class ProjectRecyclerAdapter extends RecyclerView.Adapter<ProjectRecyclerAdapter.ViewHolder> {
 
     private final Context mContext;
-    private final List<ProjectInfo> mProjects;
+    private Cursor mCursor;
     private final LayoutInflater mLayoutInflater;
+    private int mCoursePos;
+    private int mProjectTitlePos;
+    private int mIdPos;
 
-    public ProjectRecyclerAdapter(Context context, List<ProjectInfo> projects) {
+    public ProjectRecyclerAdapter(Context context, Cursor cursor) {
         mContext = context;
-        mProjects = projects;
+        mCursor = cursor;
         mLayoutInflater = LayoutInflater.from(mContext);
+        populateColumnPositions();
+    }
+
+    private void populateColumnPositions() {
+        if (mCursor == null) {
+            return;
+        }
+        mCoursePos = mCursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
+        mProjectTitlePos = mCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
+        mIdPos = mCursor.getColumnIndex(ProjectInfoEntry._ID);
+    }
+
+    public void changeCursor(Cursor cursor) {
+        if (mCursor != null) {
+            mCursor.close();
+        }
+        mCursor = cursor;
+        populateColumnPositions();
+        notifyDataSetChanged();
+
     }
 
     @Override
@@ -32,15 +58,18 @@ public class ProjectRecyclerAdapter extends RecyclerView.Adapter<ProjectRecycler
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ProjectInfo project = mProjects.get(position);
-        holder.mTextCourse.setText(project.getCourse().getTitle());
-        holder.mTextTitle.setText(project.getTitle());
-        holder.mID = project.getID();
+        mCursor.moveToPosition(position);
+        String course = mCursor.getString(mCoursePos);
+        String projectTitle = mCursor.getString(mProjectTitlePos);
+        int id = mCursor.getInt(mIdPos);
+        holder.mTextCourse.setText(course);
+        holder.mTextTitle.setText(projectTitle);
+        holder.mID = id;
     }
 
     @Override
     public int getItemCount() {
-        return mProjects.size();
+        return (mCursor == null) ? 0 : mCursor.getCount();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

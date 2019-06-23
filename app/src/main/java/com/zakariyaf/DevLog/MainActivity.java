@@ -2,6 +2,7 @@ package com.zakariyaf.DevLog;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.google.android.material.navigation.NavigationView;
+import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
 
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -75,8 +77,22 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mProjectRecyclerAdapter.notifyDataSetChanged();
+        loadProjects();
         updateNavHeader();
+    }
+
+    private void loadProjects() {
+        SQLiteDatabase db = mDBOpenHelper.getReadableDatabase();
+        String[] projectColumns = {
+                ProjectInfoEntry.COLUMN_PROJECT_TITLE,
+                ProjectInfoEntry.COLUMN_COURSE_ID,
+                ProjectInfoEntry._ID};
+        String projectOrderBy = ProjectInfoEntry.COLUMN_COURSE_ID + " DESC," +
+                ProjectInfoEntry.COLUMN_PROJECT_TITLE;
+        Cursor projectCursor = db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
+                null, null, null, null, projectOrderBy);
+        mProjectRecyclerAdapter.changeCursor(projectCursor);
+
     }
 
     private void updateNavHeader() {
@@ -100,8 +116,7 @@ public class MainActivity extends AppCompatActivity
         mCoursesLayoutManager = new GridLayoutManager(this,
                 getResources().getInteger(R.integer.course_grid_span));
 
-        List<ProjectInfo> projects = DataManager.getInstance().getProjects();
-        mProjectRecyclerAdapter = new ProjectRecyclerAdapter(this, projects);
+        mProjectRecyclerAdapter = new ProjectRecyclerAdapter(this, null);
 
         List<CourseInfo> courses = DataManager.getInstance().getCourses();
         mCourseRecyclerAdapter = new CourseRecyclerAdapter(this, courses);
