@@ -2,6 +2,7 @@ package com.zakariyaf.DevLog;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -168,9 +169,18 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     private void saveProject() {
-        mProject.setCourse((CourseInfo) mSpinnerCourses.getSelectedItem());
-        mProject.setTitle(mTextProjectTitle.getText().toString());
-        mProject.setText(mTextProjectText.getText().toString());
+        mProjectCursor.moveToFirst();
+        int courseIdPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
+        int courseTitlePos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
+        int courseTextPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
+
+
+        CourseInfo course = new CourseInfo(mProjectCursor.getString(courseIdPos),
+                mProjectCursor.getString(courseTitlePos),
+                null);
+        mProject.setCourse(course);
+        mProject.setTitle(mProjectCursor.getString(courseTitlePos));
+        mProject.setText(mProjectCursor.getString(courseTextPos));
     }
 
     private void displayProject() {
