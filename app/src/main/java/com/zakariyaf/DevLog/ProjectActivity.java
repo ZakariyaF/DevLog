@@ -30,6 +30,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     public static final String ORIGINAL_PROJECT_TEXT = "com.zakariyaf.DevLog.ORIGINAL_PROJECT_TEXT";
     public static final int ID_NOT_SET = -1;
     public static final int LOADER_PROJECTS = 0;
+    public static final int LOADER_COURSES = 1;
     private final String TAG = getClass().getSimpleName();
     private ProjectInfo mProject = new ProjectInfo(
             DataManager.getInstance().getCourses().get(0), "", "");
@@ -70,7 +71,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         mAdapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinnerCourses.setAdapter(mAdapterCourses);
 
-        loadCourseData();
+        LoaderManager.getInstance(this).initLoader(LOADER_COURSES, null, this);
 
         readDisplayStateValues();
         if (savedInstanceState == null) {
@@ -303,14 +304,36 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         CursorLoader loader = null;
         if (id == LOADER_PROJECTS) {
             loader = createLoaderProjects();
+        } else if (id == LOADER_COURSES) {
+            loader = createLoaderCourses();
         }
         return loader;
+    }
+
+    private CursorLoader createLoaderCourses() {
+        return new CursorLoader(this) {
+            @Override
+            public Cursor loadInBackground() {
+                SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+                String[] courseColumns = {
+                        CourseInfoEntry.COLUMN_COURSE_TITLE,
+                        CourseInfoEntry.COLUMN_COURSE_ID,
+                        CourseInfoEntry._ID
+                };
+                return db.query(CourseInfoEntry.TABLE_NAME, courseColumns,
+                        null, null, null, null,
+                        CourseInfoEntry.COLUMN_COURSE_TITLE
+                );
+            }
+        };
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         if (loader.getId() == LOADER_PROJECTS) {
             loadFinishProjects(data);
+        } else if (loader.getId() == LOADER_COURSES) {
+            mAdapterCourses.changeCursor(data);
         }
     }
 
@@ -320,6 +343,8 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
             if (mProjectCursor != null) {
                 mProjectCursor.close();
             }
+        } else if (loader.getId() == LOADER_COURSES) {
+            mAdapterCourses.changeCursor(null);
         }
     }
 
