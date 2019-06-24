@@ -41,7 +41,7 @@ public class ProjectRecyclerAdapter extends RecyclerView.Adapter<ProjectRecycler
     }
 
     public void changeCursor(Cursor cursor) {
-        if (mCursor != null) {
+        if (mCursor != null && mCursor != cursor) {
             mCursor.close();
         }
         mCursor = cursor;
