@@ -1,18 +1,21 @@
 package com.zakariyaf.DevLog;
 
+
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -20,14 +23,13 @@ import android.widget.Spinner;
 import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
 import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
 
-import java.util.List;
-
-public class ProjectActivity extends AppCompatActivity {
+public class ProjectActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String PROJECT_ID = "com.zakariyaf.DevLog.PROJECT_ID";
     public static final String ORIGINAL_PROJECT_COURSE_ID = "com.zakariyaf.DevLog.ORIGINAL_PROJECT_COURSE_ID";
     public static final String ORIGINAL_PROJECT_TITLE = "com.zakariyaf.DevLog.ORIGINAL_PROJECT_TITLE";
     public static final String ORIGINAL_PROJECT_TEXT = "com.zakariyaf.DevLog.ORIGINAL_PROJECT_TEXT";
     public static final int ID_NOT_SET = -1;
+    public static final int LOADER_PROJECTS = 0;
     private final String TAG = getClass().getSimpleName();
     private ProjectInfo mProject = new ProjectInfo(
             DataManager.getInstance().getCourses().get(0), "", "");
@@ -81,7 +83,7 @@ public class ProjectActivity extends AppCompatActivity {
         mTextProjectText = (EditText) findViewById(R.id.text_project_text);
 
         if (!mIsNewProject)
-            loadProjectData();
+            LoaderManager.getInstance(this).initLoader(LOADER_PROJECTS, null, this);
         Log.d(TAG, "onCreate");
     }
 
@@ -293,6 +295,65 @@ public class ProjectActivity extends AppCompatActivity {
     protected void onDestroy() {
         mDbOpenHelper.close();
         super.onDestroy();
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        CursorLoader loader = null;
+        if (id == LOADER_PROJECTS) {
+            loader = createLoaderProjects();
+        }
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        if (loader.getId() == LOADER_PROJECTS) {
+            loadFinishProjects(data);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        if (loader.getId() == LOADER_PROJECTS) {
+            if (mProjectCursor != null) {
+                mProjectCursor.close();
+            }
+        }
+    }
+
+    private CursorLoader createLoaderProjects() {
+        return new CursorLoader(this) {
+            @Override
+            public Cursor loadInBackground() {
+                SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+
+                String courseId = "android";
+                String titleStart = "activity";
+                String selection = ProjectInfoEntry._ID + " = ?";
+                String[] selectionArgs = {String.valueOf(mProjectID)};
+
+                String[] projectColumns = {
+                        ProjectInfoEntry.COLUMN_COURSE_ID,
+                        ProjectInfoEntry.COLUMN_PROJECT_TITLE,
+                        ProjectInfoEntry.COLUMN_PROJECT_TEXT
+                };
+
+                return db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
+                        selection, selectionArgs, null, null, null);
+            }
+        };
+    }
+
+    private void loadFinishProjects(Cursor data) {
+        mProjectCursor = data;
+        mCourseIdPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
+        mProjectTitlePos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
+        mProjectTextPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
+        //move from position -1 to position 0
+        mProjectCursor.moveToNext();
+        displayProject();
     }
 }
 
