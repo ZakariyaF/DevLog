@@ -50,6 +50,19 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     private int mProjectTextPos;
     private SimpleCursorAdapter mAdapterCourses;
 
+    /**
+     * To be used as a flag to indicate that courses are ready.
+     * If we attempt accessing projects before this field becomes true the app crashes.
+     * That's why we will use it to assure that courses are the first to be loaded.
+     */
+    private boolean mCoursesQueryFinished;
+    /**
+     * To be used as a flag indicating that projects loading is finished.
+     * The purpose is to orchestrate loading projects and notes to avoid accessing one from
+     * another while it hasn't been loaded yet.
+     */
+    private boolean mProjectsQueryFinished;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -311,6 +324,9 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private CursorLoader createLoaderCourses() {
+
+        mCoursesQueryFinished = false;
+
         return new CursorLoader(this) {
             @Override
             public Cursor loadInBackground() {
@@ -334,6 +350,9 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
             loadFinishProjects(data);
         } else if (loader.getId() == LOADER_COURSES) {
             mAdapterCourses.changeCursor(data);
+            //At this point, we know that courses have been loaded and we can proceed to projects.
+            mCoursesQueryFinished = true;
+            displayProjectsWhenQueriesFinish();
         }
     }
 
@@ -349,6 +368,9 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private CursorLoader createLoaderProjects() {
+
+        mProjectsQueryFinished = false;
+
         return new CursorLoader(this) {
             @Override
             public Cursor loadInBackground() {
@@ -378,7 +400,15 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         mProjectTextPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
         //move from position -1 to position 0
         mProjectCursor.moveToNext();
-        displayProject();
+        //At this point we know that projects have been loaded correctly.
+        mProjectsQueryFinished = true;
+        displayProjectsWhenQueriesFinish();
+    }
+
+    private void displayProjectsWhenQueriesFinish() {
+        if (mCoursesQueryFinished && mProjectsQueryFinished) {
+            displayProject();
+        }
     }
 }
 
