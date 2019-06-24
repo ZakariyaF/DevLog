@@ -10,6 +10,11 @@ import android.preference.PreferenceManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +37,8 @@ import android.widget.TextView;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
+    public static final int LOADER_PROJECTS = 0;
     private ProjectRecyclerAdapter mProjectRecyclerAdapter;
     private RecyclerView mRecyclerItems;
     private LinearLayoutManager mProjectsLayoutManager;
@@ -77,7 +83,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        loadProjects();
+        LoaderManager.getInstance(this).restartLoader(LOADER_PROJECTS, null, this);
         updateNavHeader();
     }
 
@@ -215,5 +221,42 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         mDBOpenHelper.close();
         super.onDestroy();
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        CursorLoader loader = null;
+        if (id == LOADER_PROJECTS) {
+            loader = new CursorLoader(this) {
+                @Override
+                public Cursor loadInBackground() {
+                    SQLiteDatabase db = mDBOpenHelper.getReadableDatabase();
+                    String[] projectColumns = {
+                            ProjectInfoEntry.COLUMN_PROJECT_TITLE,
+                            ProjectInfoEntry.COLUMN_COURSE_ID,
+                            ProjectInfoEntry._ID};
+                    String projectOrderBy = ProjectInfoEntry.COLUMN_COURSE_ID + " DESC," +
+                            ProjectInfoEntry.COLUMN_PROJECT_TITLE;
+                    return db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
+                            null, null, null, null, projectOrderBy);
+                }
+            };
+        }
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        if (loader.getId() == LOADER_PROJECTS) {
+            mProjectRecyclerAdapter.changeCursor(data);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        if (loader.getId() == LOADER_PROJECTS) {
+            mProjectRecyclerAdapter.changeCursor(null);
+        }
     }
 }
