@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.google.android.material.navigation.NavigationView;
+import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
 import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
 
 import androidx.core.view.GravityCompat;
@@ -219,12 +220,22 @@ public class MainActivity extends AppCompatActivity
                 public Cursor loadInBackground() {
                     SQLiteDatabase db = mDBOpenHelper.getReadableDatabase();
                     String[] projectColumns = {
+                            ProjectInfoEntry.getQName(ProjectInfoEntry._ID),
                             ProjectInfoEntry.COLUMN_PROJECT_TITLE,
-                            ProjectInfoEntry.COLUMN_COURSE_ID,
-                            ProjectInfoEntry._ID};
-                    String projectOrderBy = ProjectInfoEntry.COLUMN_COURSE_ID + " DESC," +
+                            CourseInfoEntry.COLUMN_COURSE_TITLE
+                    };
+                    String projectOrderBy = CourseInfoEntry.COLUMN_COURSE_TITLE + " DESC," +
                             ProjectInfoEntry.COLUMN_PROJECT_TITLE;
-                    return db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
+                    //project_info JOIN course_info ON project_info.course_id = course_info.course_id
+                    String tablesWithJoin = ProjectInfoEntry.TABLE_NAME +
+                            " JOIN " +
+                            CourseInfoEntry.TABLE_NAME +
+                            " ON " +
+                            ProjectInfoEntry.getQName(ProjectInfoEntry.COLUMN_COURSE_ID) +
+                            " = " +
+                            CourseInfoEntry.getQName(CourseInfoEntry.COLUMN_COURSE_ID);
+
+                    return db.query(tablesWithJoin, projectColumns,
                             null, null, null, null, projectOrderBy);
                 }
             };

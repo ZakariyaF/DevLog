@@ -20,6 +20,10 @@ public final class DevLogDBContract {
                         _ID + " INTEGER PRIMARY KEY, " +
                         COLUMN_COURSE_ID + " TEXT UNIQUE NOT NULL, " +
                         COLUMN_COURSE_TITLE + " TEXT NOT NULL)";
+
+        public static final String getQName(String columnName) {
+            return TABLE_NAME + "." + columnName;
+        }
     }
 
     //Nested class for the "Project" Table in DB
@@ -36,5 +40,9 @@ public final class DevLogDBContract {
                         COLUMN_PROJECT_TITLE + " TEXT NOT NULL, " +
                         COLUMN_PROJECT_TEXT + " TEXT, " +
                         COLUMN_COURSE_ID + " TEXT NOT NULL)";
+
+        public static final String getQName(String columnName) {
+            return TABLE_NAME + "." + columnName;
+        }
     }
 }

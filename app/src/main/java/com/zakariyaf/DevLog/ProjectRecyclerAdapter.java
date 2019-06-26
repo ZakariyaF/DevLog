@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
 import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class ProjectRecyclerAdapter extends RecyclerView.Adapter<ProjectRecycler
         if (mCursor == null) {
             return;
         }
-        mCoursePos = mCursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
+        mCoursePos = mCursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_TITLE);
         mProjectTitlePos = mCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
         mIdPos = mCursor.getColumnIndex(ProjectInfoEntry._ID);
     }
