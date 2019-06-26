@@ -87,20 +87,6 @@ public class MainActivity extends AppCompatActivity
         updateNavHeader();
     }
 
-    private void loadProjects() {
-        SQLiteDatabase db = mDBOpenHelper.getReadableDatabase();
-        String[] projectColumns = {
-                ProjectInfoEntry.COLUMN_PROJECT_TITLE,
-                ProjectInfoEntry.COLUMN_COURSE_ID,
-                ProjectInfoEntry._ID};
-        String projectOrderBy = ProjectInfoEntry.COLUMN_COURSE_ID + " DESC," +
-                ProjectInfoEntry.COLUMN_PROJECT_TITLE;
-        Cursor projectCursor = db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
-                null, null, null, null, projectOrderBy);
-        mProjectRecyclerAdapter.changeCursor(projectCursor);
-
-    }
-
     private void updateNavHeader() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
