@@ -6,6 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
+import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
+
 public class DevLogOpenHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "DevLog.db";
@@ -22,9 +25,13 @@ public class DevLogOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //Create the "CourseInfo" table
-        db.execSQL(DevLogDBContract.CourseInfoEntry.SQL_CREATE_TABLE);
+        db.execSQL(CourseInfoEntry.SQL_CREATE_TABLE);
         //Create the "ProjectInfo" table
-        db.execSQL(DevLogDBContract.ProjectInfoEntry.SQL_CREATE_TABLE);
+        db.execSQL(ProjectInfoEntry.SQL_CREATE_TABLE);
+        //Create the "course_title" index
+        db.execSQL(CourseInfoEntry.SQL_CREATE_INDEX1);
+        //Create the "project_title" index
+        db.execSQL(ProjectInfoEntry.SQL_CREATE_INDEX1);
         //Add sample data to the DB
         DBDataWorker dbDataWorker = new DBDataWorker(db);
         dbDataWorker.insertCourses();
