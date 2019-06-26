@@ -12,7 +12,7 @@ import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
 public class DevLogOpenHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "DevLog.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public DevLogOpenHelper(@Nullable Context context) {
         /*
         Don't customize the DB behavior so set the CursorFactory parameter to null
@@ -40,6 +40,9 @@ public class DevLogOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if (oldVersion < 2) {
+            db.execSQL(CourseInfoEntry.SQL_CREATE_INDEX1);
+            db.execSQL(ProjectInfoEntry.SQL_CREATE_INDEX1);
+        }
     }
 }
