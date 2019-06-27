@@ -186,18 +186,19 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void saveProject() {
-        mProjectCursor.moveToFirst();
-        int courseIdPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
-        int courseTitlePos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
-        int courseTextPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
+        String courseId = selectedCourseId();
+        String projectTitle = mTextProjectTitle.getText().toString();
+        String projectText = mTextProjectText.getText().toString();
+        saveProjectToDatabase(courseId, projectTitle, projectText);
+    }
 
-
-        CourseInfo course = new CourseInfo(mProjectCursor.getString(courseIdPos),
-                mProjectCursor.getString(courseTitlePos),
-                null);
-        mProject.setCourse(course);
-        mProject.setTitle(mProjectCursor.getString(courseTitlePos));
-        mProject.setText(mProjectCursor.getString(courseTextPos));
+    private String selectedCourseId() {
+        int selectedPosition = mSpinnerCourses.getSelectedItemPosition();
+        Cursor cursor = mAdapterCourses.getCursor();
+        cursor.moveToPosition(selectedPosition);
+        int courseIdPos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_ID);
+        String courseId = cursor.getString(courseIdPos);
+        return courseId;
     }
 
     private void saveProjectToDatabase(String courseId, String projectTitle, String projectText) {
@@ -211,7 +212,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
         SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
         db.update(ProjectInfoEntry.TABLE_NAME, values, selection, selectionsArgs);
-        
+
     }
 
     private void displayProject() {
