@@ -257,9 +257,13 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void createNewProject() {
-        DataManager dm = DataManager.getInstance();
-        mProjectID = dm.createNewProject();
-//        mProject = dm.getProjects().get(mProjectID);
+        ContentValues values = new ContentValues();
+        values.put(ProjectInfoEntry.COLUMN_COURSE_ID, "");
+        values.put(ProjectInfoEntry.COLUMN_PROJECT_TITLE, "");
+        values.put(ProjectInfoEntry.COLUMN_PROJECT_TEXT, "");
+        SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+        mProjectID = (int) db.insert(ProjectInfoEntry.TABLE_NAME, null, values);
+        
     }
 
     @Override
