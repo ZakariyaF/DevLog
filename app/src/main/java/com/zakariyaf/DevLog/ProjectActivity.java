@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -63,6 +64,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
      * another while it hasn't been loaded yet.
      */
     private boolean mProjectsQueryFinished;
+    private boolean mIsEmptyProject;
 
 
     @Override
@@ -160,14 +162,33 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         if (mIsCancelling) {
             Log.i(TAG, "Cancelling project at position: " + mProjectID);
             if (mIsNewProject) {
-                DataManager.getInstance().removeProject(mProjectID);
+                deleteProjectFromDatabase();
             } else {
                 storePreviousProjectValues();
             }
+        } else if (mTextProjectTitle.getText().toString().equals("")
+                && mTextProjectText.getText().toString().equals("")) {
+            deleteProjectFromDatabase();
         } else {
             saveProject();
         }
         Log.d(TAG, "onPause");
+    }
+
+    private void deleteProjectFromDatabase() {
+        final String selection = ProjectInfoEntry._ID + " = ?";
+        final String[] selectionArgs = {Integer.toString(mProjectID)};
+
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+                db.delete(ProjectInfoEntry.TABLE_NAME, selection, selectionArgs);
+                return null;
+            }
+        };
+        task.execute();
+
     }
 
     private void storePreviousProjectValues() {
@@ -202,16 +223,24 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void saveProjectToDatabase(String courseId, String projectTitle, String projectText) {
-        String selection = ProjectInfoEntry._ID + " = ?";
-        String[] selectionsArgs = {Integer.toString(mProjectID)};
+        final String selection = ProjectInfoEntry._ID + " = ?";
+        final String[] selectionsArgs = {Integer.toString(mProjectID)};
 
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
         values.put(ProjectInfoEntry.COLUMN_COURSE_ID, courseId);
         values.put(ProjectInfoEntry.COLUMN_PROJECT_TITLE, projectTitle);
         values.put(ProjectInfoEntry.COLUMN_PROJECT_TEXT, projectText);
 
-        SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-        db.update(ProjectInfoEntry.TABLE_NAME, values, selection, selectionsArgs);
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+                db.update(ProjectInfoEntry.TABLE_NAME, values, selection, selectionsArgs);
+                return null;
+            }
+        };
+        task.execute();
+
 
     }
 
@@ -257,13 +286,21 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void createNewProject() {
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
         values.put(ProjectInfoEntry.COLUMN_COURSE_ID, "");
         values.put(ProjectInfoEntry.COLUMN_PROJECT_TITLE, "");
         values.put(ProjectInfoEntry.COLUMN_PROJECT_TEXT, "");
-        SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-        mProjectID = (int) db.insert(ProjectInfoEntry.TABLE_NAME, null, values);
-        
+
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+                mProjectID = (int) db.insert(ProjectInfoEntry.TABLE_NAME, null, values);
+                return null;
+            }
+        };
+        task.execute();
+
     }
 
     @Override
