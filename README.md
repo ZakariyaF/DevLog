@@ -21,4 +21,5 @@ Add, modify and save your course and/or project progress easily!
 ## Status
 Project is: _in progress_
 * Basic app skeleton...:heavy_check_mark:
-* Implementing SQLite data persistence...:hourglass_flowing_sand:
+* Implementing SQLite data persistence...:heavy_check_mark:
+* Implementing Content Providers...:hourglass_flowing_sand: 
