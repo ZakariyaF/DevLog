@@ -1,6 +1,7 @@
 package com.zakariyaf.DevLog;
 
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -197,6 +198,20 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         mProject.setCourse(course);
         mProject.setTitle(mProjectCursor.getString(courseTitlePos));
         mProject.setText(mProjectCursor.getString(courseTextPos));
+    }
+
+    private void saveProjectToDatabase(String courseId, String projectTitle, String projectText) {
+        String selection = ProjectInfoEntry._ID + " = ?";
+        String[] selectionsArgs = {Integer.toString(mProjectID)};
+
+        ContentValues values = new ContentValues();
+        values.put(ProjectInfoEntry.COLUMN_COURSE_ID, courseId);
+        values.put(ProjectInfoEntry.COLUMN_PROJECT_TITLE, projectTitle);
+        values.put(ProjectInfoEntry.COLUMN_PROJECT_TEXT, projectText);
+
+        SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+        db.update(ProjectInfoEntry.TABLE_NAME, values, selection, selectionsArgs);
+        
     }
 
     private void displayProject() {
