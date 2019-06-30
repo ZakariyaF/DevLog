@@ -3,9 +3,14 @@ package com.zakariyaf.DevLog;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
+
 public class DevLogProvider extends ContentProvider {
+
+    private DevLogOpenHelper mDbOpenHelper;
     public DevLogProvider() {
     }
 
@@ -30,15 +35,18 @@ public class DevLogProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        // TODO: Implement this to initialize your content provider on startup.
-        return false;
+        mDbOpenHelper = new DevLogOpenHelper(getContext());
+        return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        // TODO: Implement this to handle query requests from clients.
-        throw new UnsupportedOperationException("Not yet implemented");
+        Cursor cursor = null;
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+        cursor = db.query(CourseInfoEntry.TABLE_NAME, projection, selection,
+                selectionArgs, null, null, sortOrder);
+        return cursor;
     }
 
     @Override
