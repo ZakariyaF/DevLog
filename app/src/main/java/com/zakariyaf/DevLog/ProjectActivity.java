@@ -25,6 +25,8 @@ import android.widget.Spinner;
 
 import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
 import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
+import com.zakariyaf.DevLog.DevLogProviderContract.Courses;
+import com.zakariyaf.DevLog.DevLogProviderContract.Projects;
 
 public class ProjectActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     public static final String PROJECT_ID = "com.zakariyaf.DevLog.PROJECT_ID";
@@ -81,7 +83,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
 
         mAdapterCourses = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, null,
-                new String[]{CourseInfoEntry.COLUMN_COURSE_TITLE},
+                new String[]{Courses.COLUMN_COURSE_TITLE},
                 new int[]{android.R.id.text1},
                 0
         );
@@ -108,13 +110,13 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     private void loadCourseData() {
         SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
         String[] courseColumns = {
-                CourseInfoEntry.COLUMN_COURSE_TITLE,
-                CourseInfoEntry.COLUMN_COURSE_ID,
-                CourseInfoEntry._ID
+                Courses.COLUMN_COURSE_TITLE,
+                Courses.COLUMN_COURSE_ID,
+                Courses._ID
         };
         Cursor cursor = db.query(CourseInfoEntry.TABLE_NAME, courseColumns,
                 null, null, null, null,
-                CourseInfoEntry.COLUMN_COURSE_TITLE
+                Courses.COLUMN_COURSE_TITLE
         );
         mAdapterCourses.changeCursor(cursor);
     }
@@ -128,16 +130,16 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         String[] selectionArgs = {String.valueOf(mProjectID)};
 
         String[] projectColumns = {
-                ProjectInfoEntry.COLUMN_COURSE_ID,
-                ProjectInfoEntry.COLUMN_PROJECT_TITLE,
-                ProjectInfoEntry.COLUMN_PROJECT_TEXT
+                Projects.COLUMN_COURSE_ID,
+                Projects.COLUMN_PROJECT_TITLE,
+                Projects.COLUMN_PROJECT_TEXT
         };
 
         mProjectCursor = db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
                 selection, selectionArgs, null, null, null);
-        mCourseIdPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
-        mProjectTitlePos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
-        mProjectTextPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
+        mCourseIdPos = mProjectCursor.getColumnIndex(Projects.COLUMN_COURSE_ID);
+        mProjectTitlePos = mProjectCursor.getColumnIndex(Projects.COLUMN_PROJECT_TITLE);
+        mProjectTextPos = mProjectCursor.getColumnIndex(Projects.COLUMN_PROJECT_TEXT);
         //move from position -1 to position 0
         mProjectCursor.moveToNext();
         displayProject();
@@ -218,7 +220,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         int selectedPosition = mSpinnerCourses.getSelectedItemPosition();
         Cursor cursor = mAdapterCourses.getCursor();
         cursor.moveToPosition(selectedPosition);
-        int courseIdPos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_ID);
+        int courseIdPos = cursor.getColumnIndex(Courses.COLUMN_COURSE_ID);
         String courseId = cursor.getString(courseIdPos);
         return courseId;
     }
@@ -228,9 +230,9 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         final String[] selectionsArgs = {Integer.toString(mProjectID)};
 
         final ContentValues values = new ContentValues();
-        values.put(ProjectInfoEntry.COLUMN_COURSE_ID, courseId);
-        values.put(ProjectInfoEntry.COLUMN_PROJECT_TITLE, projectTitle);
-        values.put(ProjectInfoEntry.COLUMN_PROJECT_TEXT, projectText);
+        values.put(Projects.COLUMN_COURSE_ID, courseId);
+        values.put(Projects.COLUMN_PROJECT_TITLE, projectTitle);
+        values.put(Projects.COLUMN_PROJECT_TEXT, projectText);
 
         AsyncTask task = new AsyncTask() {
             @Override
@@ -258,7 +260,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
     private int getIndexOfCourseId(String courseId) {
         Cursor cursor = mAdapterCourses.getCursor();
-        int courseIdPos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_ID);
+        int courseIdPos = cursor.getColumnIndex(Courses.COLUMN_COURSE_ID);
         int courseRowIndex = 0;
 
         boolean more = cursor.moveToFirst();
@@ -288,9 +290,9 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
     private void createNewProject() {
         final ContentValues values = new ContentValues();
-        values.put(ProjectInfoEntry.COLUMN_COURSE_ID, "");
-        values.put(ProjectInfoEntry.COLUMN_PROJECT_TITLE, "");
-        values.put(ProjectInfoEntry.COLUMN_PROJECT_TEXT, "");
+        values.put(Projects.COLUMN_COURSE_ID, "");
+        values.put(Projects.COLUMN_PROJECT_TITLE, "");
+        values.put(Projects.COLUMN_PROJECT_TEXT, "");
 
         AsyncTask task = new AsyncTask() {
             @Override
@@ -384,14 +386,14 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     private CursorLoader createLoaderCourses() {
 
         mCoursesQueryFinished = false;
-        Uri uri = Uri.parse("content://com.zakariyaf.devlog.provider");
+        Uri uri = Courses.CONTENT_URI;
         String[] courseColumns = {
-                CourseInfoEntry.COLUMN_COURSE_TITLE,
-                CourseInfoEntry.COLUMN_COURSE_ID,
-                CourseInfoEntry._ID
+                Courses.COLUMN_COURSE_TITLE,
+                Courses.COLUMN_COURSE_ID,
+                Courses._ID
         };
         return new CursorLoader(this, uri, courseColumns, null, null,
-                CourseInfoEntry.COLUMN_COURSE_TITLE);
+                Courses.COLUMN_COURSE_TITLE);
     }
 
     @Override
@@ -428,13 +430,13 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
                 String courseId = "android";
                 String titleStart = "activity";
-                String selection = ProjectInfoEntry._ID + " = ?";
+                String selection = Projects._ID + " = ?";
                 String[] selectionArgs = {String.valueOf(mProjectID)};
 
                 String[] projectColumns = {
-                        ProjectInfoEntry.COLUMN_COURSE_ID,
-                        ProjectInfoEntry.COLUMN_PROJECT_TITLE,
-                        ProjectInfoEntry.COLUMN_PROJECT_TEXT
+                        Projects.COLUMN_COURSE_ID,
+                        Projects.COLUMN_PROJECT_TITLE,
+                        Projects.COLUMN_PROJECT_TEXT
                 };
 
                 return db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
@@ -445,9 +447,9 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
     private void loadFinishProjects(Cursor data) {
         mProjectCursor = data;
-        mCourseIdPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_COURSE_ID);
-        mProjectTitlePos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TITLE);
-        mProjectTextPos = mProjectCursor.getColumnIndex(ProjectInfoEntry.COLUMN_PROJECT_TEXT);
+        mCourseIdPos = mProjectCursor.getColumnIndex(Projects.COLUMN_COURSE_ID);
+        mProjectTitlePos = mProjectCursor.getColumnIndex(Projects.COLUMN_PROJECT_TITLE);
+        mProjectTextPos = mProjectCursor.getColumnIndex(Projects.COLUMN_PROJECT_TEXT);
         //move from position -1 to position 0
         mProjectCursor.moveToNext();
         //At this point we know that projects have been loaded correctly.
