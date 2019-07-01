@@ -2,15 +2,28 @@ package com.zakariyaf.DevLog;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
+import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
+import com.zakariyaf.DevLog.DevLogProviderContract.Courses;
+import com.zakariyaf.DevLog.DevLogProviderContract.Projects;
 
 public class DevLogProvider extends ContentProvider {
 
     private DevLogOpenHelper mDbOpenHelper;
+
+    public static final int COURSES = 0;
+    public static final int PROJECTS = 1;
+    private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    static {
+        sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Courses.PATH, COURSES);
+        sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH, PROJECTS);
+    }
     public DevLogProvider() {
     }
 
@@ -44,8 +57,18 @@ public class DevLogProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
         Cursor cursor = null;
         SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-        cursor = db.query(CourseInfoEntry.TABLE_NAME, projection, selection,
-                selectionArgs, null, null, sortOrder);
+        int uriMatch = sUriMatcher.match(uri);
+        switch (uriMatch) {
+            case COURSES:
+                cursor = db.query(CourseInfoEntry.TABLE_NAME, projection, selection,
+                        selectionArgs, null, null, sortOrder);
+                break;
+            case PROJECTS:
+                cursor = db.query(ProjectInfoEntry.TABLE_NAME, projection, selection,
+                        selectionArgs, null, null, sortOrder);
+                break;
+        }
+
         return cursor;
     }
 
