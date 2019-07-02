@@ -29,8 +29,10 @@ public final class DevLogProviderContract {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, PATH);
     }
 
-    public static final class Projects implements ProjectsColumns, CoursesIdColumns, BaseColumns {
+    public static final class Projects implements ProjectsColumns, CoursesIdColumns, BaseColumns, CoursesColumns {
         public static final String PATH = "projects";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, PATH);
+        public static final String PATH_EXPANDED = "projects_expanded";
+        public static final Uri CONTENT_EXPANDED_URI = Uri.withAppendedPath(AUTHORITY_URI, PATH_EXPANDED);
     }
 }
