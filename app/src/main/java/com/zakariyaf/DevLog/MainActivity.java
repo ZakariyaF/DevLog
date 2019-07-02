@@ -24,6 +24,7 @@ import android.view.View;
 import com.google.android.material.navigation.NavigationView;
 import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
 import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
+import com.zakariyaf.DevLog.DevLogProviderContract.Projects;
 
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -215,31 +216,16 @@ public class MainActivity extends AppCompatActivity
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         CursorLoader loader = null;
         if (id == LOADER_PROJECTS) {
-            loader = new CursorLoader(this) {
-                @Override
-                public Cursor loadInBackground() {
-                    SQLiteDatabase db = mDBOpenHelper.getReadableDatabase();
                     String[] projectColumns = {
-                            ProjectInfoEntry.getQName(ProjectInfoEntry._ID),
-                            ProjectInfoEntry.COLUMN_PROJECT_TITLE,
-                            CourseInfoEntry.COLUMN_COURSE_TITLE
+                            Projects._ID,
+                            Projects.COLUMN_PROJECT_TITLE,
+                            Projects.COLUMN_COURSE_TITLE
                     };
-                    String projectOrderBy = CourseInfoEntry.COLUMN_COURSE_TITLE + " DESC," +
-                            ProjectInfoEntry.COLUMN_PROJECT_TITLE;
-                    //project_info JOIN course_info ON project_info.course_id = course_info.course_id
-                    String tablesWithJoin = ProjectInfoEntry.TABLE_NAME +
-                            " JOIN " +
-                            CourseInfoEntry.TABLE_NAME +
-                            " ON " +
-                            ProjectInfoEntry.getQName(ProjectInfoEntry.COLUMN_COURSE_ID) +
-                            " = " +
-                            CourseInfoEntry.getQName(CourseInfoEntry.COLUMN_COURSE_ID);
-
-                    return db.query(tablesWithJoin, projectColumns,
-                            null, null, null, null, projectOrderBy);
+            String projectOrderBy = Projects.COLUMN_COURSE_TITLE + " DESC," +
+                    Projects.COLUMN_PROJECT_TITLE;
+            loader = new CursorLoader(this, Projects.CONTENT_EXPANDED_URI, projectColumns,
+                    null, null, projectOrderBy);
                 }
-            };
-        }
         return loader;
     }
 

@@ -6,6 +6,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.provider.BaseColumns;
 
 import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
 import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
@@ -80,11 +81,18 @@ public class DevLogProvider extends ContentProvider {
 
     private Cursor projectsExpandedQuery(SQLiteDatabase db, String[] projection, String selection,
                                          String[] selectionArgs, String sortOrder) {
+        String[] columns = new String[projection.length];
+        for (int i = 0; i < projection.length; i++) {
+            columns[i] = projection[i].equals(BaseColumns._ID) ||
+                    projection[i].equals(DevLogProviderContract.CoursesIdColumns.COLUMN_COURSE_ID) ?
+                    ProjectInfoEntry.getQName(projection[i]) :
+                    projection[i];
+        }
         String tablesWithJoin = ProjectInfoEntry.TABLE_NAME + " JOIN " +
                 CourseInfoEntry.TABLE_NAME + " ON " +
                 ProjectInfoEntry.getQName(ProjectInfoEntry.COLUMN_COURSE_ID) +
                 " = " + CourseInfoEntry.getQName(CourseInfoEntry.COLUMN_COURSE_ID);
-        return db.query(tablesWithJoin, projection, selection,
+        return db.query(tablesWithJoin, columns, selection,
                 selectionArgs, null, null, sortOrder);
     }
 
