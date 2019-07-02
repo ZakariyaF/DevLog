@@ -20,9 +20,12 @@ public class DevLogProvider extends ContentProvider {
     public static final int PROJECTS = 1;
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
+    public static final int PROJECTS_EXPANDED = 2;
+
     static {
         sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Courses.PATH, COURSES);
         sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH, PROJECTS);
+        sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH_EXPANDED, PROJECTS_EXPANDED);
     }
     public DevLogProvider() {
     }
@@ -67,9 +70,22 @@ public class DevLogProvider extends ContentProvider {
                 cursor = db.query(ProjectInfoEntry.TABLE_NAME, projection, selection,
                         selectionArgs, null, null, sortOrder);
                 break;
+            case PROJECTS_EXPANDED:
+                cursor = projectsExpandedQuery(db, projection, selection, selectionArgs, sortOrder);
+                break;
         }
 
         return cursor;
+    }
+
+    private Cursor projectsExpandedQuery(SQLiteDatabase db, String[] projection, String selection,
+                                         String[] selectionArgs, String sortOrder) {
+        String tablesWithJoin = ProjectInfoEntry.TABLE_NAME + " JOIN " +
+                CourseInfoEntry.TABLE_NAME + " ON " +
+                ProjectInfoEntry.getQName(ProjectInfoEntry.COLUMN_COURSE_ID) +
+                " = " + CourseInfoEntry.getQName(CourseInfoEntry.COLUMN_COURSE_ID);
+        return db.query(tablesWithJoin, projection, selection,
+                selectionArgs, null, null, sortOrder);
     }
 
     @Override
