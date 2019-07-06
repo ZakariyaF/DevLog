@@ -10,9 +10,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.loader.app.LoaderManager;
+import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
@@ -293,16 +295,13 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         values.put(Projects.COLUMN_COURSE_ID, "");
         values.put(Projects.COLUMN_PROJECT_TITLE, "");
         values.put(Projects.COLUMN_PROJECT_TEXT, "");
-
-        AsyncTask task = new AsyncTask() {
+        new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-                mProjectID = (int) db.insert(ProjectInfoEntry.TABLE_NAME, null, values);
+                Uri uri = getContentResolver().insert(Projects.CONTENT_URI, values);
                 return null;
             }
-        };
-        task.execute();
+        }.execute();
 
     }
 
