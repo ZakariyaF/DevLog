@@ -24,10 +24,13 @@ public class DevLogProvider extends ContentProvider {
 
     public static final int PROJECTS_EXPANDED = 2;
 
+    public static final int PROJECTS_ROW = 3;
+
     static {
         sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Courses.PATH, COURSES);
         sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH, PROJECTS);
         sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH_EXPANDED, PROJECTS_EXPANDED);
+        sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH + "/#", PROJECTS_ROW);
     }
     public DevLogProvider() {
     }
@@ -90,6 +93,13 @@ public class DevLogProvider extends ContentProvider {
             case PROJECTS_EXPANDED:
                 cursor = projectsExpandedQuery(db, projection, selection, selectionArgs, sortOrder);
                 break;
+            case PROJECTS_ROW:
+                long rowId = ContentUris.parseId(uri);
+                String rowSelection = ProjectInfoEntry._ID + " = ?";
+                String[] rowSelectionArgs = new String[]{Long.toString(rowId)};
+                cursor = db.query(ProjectInfoEntry.TABLE_NAME, projection,
+                        rowSelection, rowSelectionArgs, null, null, null);
+
         }
 
         return cursor;

@@ -70,6 +70,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
      */
     private boolean mProjectsQueryFinished;
     private boolean mIsEmptyProject;
+    private Uri mProjectUri;
 
 
     @Override
@@ -298,7 +299,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                Uri uri = getContentResolver().insert(Projects.CONTENT_URI, values);
+                mProjectUri = getContentResolver().insert(Projects.CONTENT_URI, values);
                 return null;
             }
         }.execute();
