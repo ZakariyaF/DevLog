@@ -1,6 +1,7 @@
 package com.zakariyaf.DevLog;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -46,8 +47,23 @@ public class DevLogProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        // TODO: Implement this to handle requests to insert a new row.
-        throw new UnsupportedOperationException("Not yet implemented");
+        SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+        long rowId = -1;
+        Uri rowUri = null;
+        int uriMatch = sUriMatcher.match(uri);
+        switch (uriMatch) {
+            case PROJECTS:
+                rowId = db.insert(ProjectInfoEntry.TABLE_NAME, null, values);
+                rowUri = ContentUris.withAppendedId(Projects.CONTENT_URI, rowId);
+                break;
+            case COURSES:
+                rowId = db.insert(CourseInfoEntry.TABLE_NAME, null, values);
+                rowUri = ContentUris.withAppendedId(Courses.CONTENT_URI, rowId);
+                break;
+            case PROJECTS_EXPANDED:
+                break;
+        }
+        return rowUri;
     }
 
     @Override
