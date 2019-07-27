@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DevLog.iml" filepath="$PROJECT_DIR$/DevLog.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/devlogprovidercontract/devlogprovidercontract.iml" filepath="$PROJECT_DIR$/devlogprovidercontract/devlogprovidercontract.iml" />
     </modules>
   </component>
 </project>
