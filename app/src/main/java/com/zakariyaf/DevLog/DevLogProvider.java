@@ -129,7 +129,7 @@ public class DevLogProvider extends ContentProvider {
                 rowUri = ContentUris.withAppendedId(Courses.CONTENT_URI, rowId);
                 break;
             case PROJECTS_EXPANDED:
-                break;
+                throw new UnsupportedOperationException("Read-Only table!");
         }
         return rowUri;
     }
