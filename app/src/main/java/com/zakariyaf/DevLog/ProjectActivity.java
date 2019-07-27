@@ -453,7 +453,8 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void showReminderNotification() {
-        ProjectReminderNotification.notify(this, "Test", 0);
+        String projectText = mTextProjectText.getText().toString();
+        ProjectReminderNotification.notify(this, projectText);
     }
 }
 
