@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -26,11 +27,16 @@ public class DevLogProvider extends ContentProvider {
 
     public static final int PROJECTS_ROW = 3;
 
+    public static final int PROJECTS_EXPANDED_ROW = 5;
+    private static final int COURSES_ROW = 4;
+
     static {
         sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Courses.PATH, COURSES);
         sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH, PROJECTS);
         sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH_EXPANDED, PROJECTS_EXPANDED);
+        sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Courses.PATH + "/#", COURSES_ROW);
         sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH + "/#", PROJECTS_ROW);
+        sUriMatcher.addURI(DevLogProviderContract.AUTHORITY, Projects.PATH_EXPANDED + "/#", PROJECTS_EXPANDED_ROW);
     }
     public DevLogProvider() {
     }
@@ -38,7 +44,41 @@ public class DevLogProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        long rowId = -1;
+        String rowSelection = null;
+        String[] rowSelectionArgs = null;
+        int nRows = -1;
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+
+        int uriMatch = sUriMatcher.match(uri);
+        switch (uriMatch) {
+            case COURSES:
+                nRows = db.delete(CourseInfoEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case PROJECTS:
+                nRows = db.delete(ProjectInfoEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case PROJECTS_EXPANDED:
+                // throw exception saying that this is a read-only table
+                throw new UnsupportedOperationException("Read-Only table!");
+            case COURSES_ROW:
+                rowId = ContentUris.parseId(uri);
+                rowSelection = CourseInfoEntry._ID + " = ?";
+                rowSelectionArgs = new String[]{Long.toString(rowId)};
+                nRows = db.delete(CourseInfoEntry.TABLE_NAME, rowSelection, rowSelectionArgs);
+                break;
+            case PROJECTS_ROW:
+                rowId = ContentUris.parseId(uri);
+                rowSelection = ProjectInfoEntry._ID + " = ?";
+                rowSelectionArgs = new String[]{Long.toString(rowId)};
+                nRows = db.delete(ProjectInfoEntry.TABLE_NAME, rowSelection, rowSelectionArgs);
+                break;
+            case PROJECTS_EXPANDED_ROW:
+                // throw exception saying that this is a read-only table
+                throw new UnsupportedOperationException("Read-Only table!");
+        }
+
+        return nRows;
     }
 
     @Override
