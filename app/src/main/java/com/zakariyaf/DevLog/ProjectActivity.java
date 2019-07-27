@@ -1,6 +1,7 @@
 package com.zakariyaf.DevLog;
 
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -422,27 +423,13 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     private CursorLoader createLoaderProjects() {
 
         mProjectsQueryFinished = false;
-
-        return new CursorLoader(this) {
-            @Override
-            public Cursor loadInBackground() {
-                SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-
-                String courseId = "android";
-                String titleStart = "activity";
-                String selection = Projects._ID + " = ?";
-                String[] selectionArgs = {String.valueOf(mProjectID)};
-
-                String[] projectColumns = {
-                        Projects.COLUMN_COURSE_ID,
-                        Projects.COLUMN_PROJECT_TITLE,
-                        Projects.COLUMN_PROJECT_TEXT
-                };
-
-                return db.query(ProjectInfoEntry.TABLE_NAME, projectColumns,
-                        selection, selectionArgs, null, null, null);
-            }
+        String[] projectColumns = {
+                Projects.COLUMN_COURSE_ID,
+                Projects.COLUMN_PROJECT_TITLE,
+                Projects.COLUMN_PROJECT_TEXT
         };
+        mProjectUri = ContentUris.withAppendedId(Projects.CONTENT_URI, mProjectID);
+        return new CursorLoader(this, mProjectUri, projectColumns, null, null, null);
     }
 
     private void loadFinishProjects(Cursor data) {
