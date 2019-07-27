@@ -30,14 +30,14 @@ android {
             testCoverageEnabled true
         }
     }
-    
+
     testOptions {
-    unitTests.all {
-      jacoco {
-        includeNoLocationClasses = true
-      }
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
     }
-  }
 
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
@@ -68,13 +68,3 @@ dependencies {
     androidTestImplementation 'com.google.android.material:material:1.0.0'
     androidTestImplementation 'androidx.cardview:cardview:1.0.0'
 }
-
-
-
-
-
-
-
-
-
-

@@ -22,6 +22,7 @@ import androidx.loader.content.Loader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -440,6 +441,10 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         if (mCoursesQueryFinished && mProjectsQueryFinished) {
             displayProject();
         }
+    }
+
+    private void showReminderNotification(View view) {
+
     }
 }
 
