@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.zakariyaf.DevLog.DevLogDBContract.CourseInfoEntry;
 import com.zakariyaf.DevLog.DevLogDBContract.ProjectInfoEntry;
 import com.zakariyaf.DevLog.DevLogProviderContract.Courses;
@@ -47,6 +48,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     private Spinner mSpinnerCourses;
     private EditText mTextProjectTitle;
     private EditText mTextProjectText;
+    private FloatingActionButton mReminderFab;
     private int mProjectID;
     private boolean mIsCancelling;
     private String mOriginalProjectCourseId;
@@ -86,6 +88,13 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
         mSpinnerCourses = (Spinner) findViewById(R.id.spinner_courses);
 
+        mReminderFab = findViewById(R.id.reminder_fab);
+        mReminderFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showReminderNotification();
+            }
+        });
 
         mAdapterCourses = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, null,
                 new String[]{Courses.COLUMN_COURSE_TITLE},
@@ -443,8 +452,8 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         }
     }
 
-    private void showReminderNotification(View view) {
-
+    private void showReminderNotification() {
+        ProjectReminderNotification.notify(this, "Test", 0);
     }
 }
 
