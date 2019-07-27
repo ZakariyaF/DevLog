@@ -455,7 +455,8 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     private void showReminderNotification() {
         String projectTitle = mTextProjectTitle.getText().toString();
         String projectText = mTextProjectText.getText().toString();
-        ProjectReminderNotification.notify(this, projectTitle, projectText);
+        int projectId = (int) ContentUris.parseId(mProjectUri);
+        ProjectReminderNotification.notify(this, projectTitle, projectText, projectId);
     }
 }
 

@@ -43,13 +43,15 @@ public class ProjectReminderNotification {
      * @see #cancel(Context)
      */
     public static void notify(final Context context, final String projectTitle,
-                              final String projectText) {
+                              final String projectText, int projectId) {
         final Resources res = context.getResources();
 
         // This image is used as the notification's large icon (thumbnail).
         // TODO: Remove this if your notification has no relevant thumbnail.
         final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
 
+        Intent projectActivityIntent = new Intent(context, ProjectActivity.class);
+        projectActivityIntent.putExtra(ProjectActivity.PROJECT_ID, projectId);
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 
                 // Set appropriate defaults for the notification light, sound,
@@ -96,7 +98,7 @@ public class ProjectReminderNotification {
                         PendingIntent.getActivity(
                                 context,
                                 0,
-                                new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com")),
+                                projectActivityIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT))
 
                 // Automatically dismiss the notification when it is touched.
