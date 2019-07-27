@@ -183,14 +183,10 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void deleteProjectFromDatabase() {
-        final String selection = ProjectInfoEntry._ID + " = ?";
-        final String[] selectionArgs = {Integer.toString(mProjectID)};
-
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-                db.delete(ProjectInfoEntry.TABLE_NAME, selection, selectionArgs);
+                getContentResolver().delete(mProjectUri, null, null);
                 return null;
             }
         };
