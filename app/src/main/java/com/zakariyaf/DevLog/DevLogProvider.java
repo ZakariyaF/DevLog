@@ -1,6 +1,7 @@
 package com.zakariyaf.DevLog;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -18,6 +19,8 @@ import com.zakariyaf.DevLog.DevLogProviderContract.Projects;
 public class DevLogProvider extends ContentProvider {
 
     private DevLogOpenHelper mDbOpenHelper;
+
+    private static final String MIME_VENDOR_TYPE = "vnd." + DevLogProviderContract.AUTHORITY + ".";
 
     public static final int COURSES = 0;
     public static final int PROJECTS = 1;
@@ -83,9 +86,31 @@ public class DevLogProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        // TODO: Implement this to handle requests for the MIME type of the data
-        // at the given URI.
-        throw new UnsupportedOperationException("Not yet implemented");
+        String mimeType = null;
+        int uriMatch = sUriMatcher.match(uri);
+        switch (uriMatch) {
+            case COURSES:
+                // vnd.android.cursor.dir/vnd.com.zakariyaf.devlog.provider.courses
+                mimeType = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" +
+                        MIME_VENDOR_TYPE + Courses.PATH;
+                break;
+            case PROJECTS:
+                mimeType = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + MIME_VENDOR_TYPE + Projects.PATH;
+                break;
+            case PROJECTS_EXPANDED:
+                mimeType = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + MIME_VENDOR_TYPE + Projects.PATH_EXPANDED;
+                break;
+            case COURSES_ROW:
+                mimeType = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + MIME_VENDOR_TYPE + Courses.PATH;
+                break;
+            case PROJECTS_ROW:
+                mimeType = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + MIME_VENDOR_TYPE + Projects.PATH;
+                break;
+            case PROJECTS_EXPANDED_ROW:
+                mimeType = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + MIME_VENDOR_TYPE + Projects.PATH_EXPANDED;
+                break;
+        }
+        return mimeType;
     }
 
     @Override
