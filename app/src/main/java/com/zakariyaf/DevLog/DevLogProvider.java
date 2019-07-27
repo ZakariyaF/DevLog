@@ -143,6 +143,9 @@ public class DevLogProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
+        long rowId = -1;
+        String rowSelection = null;
+        String[] rowSelectionArgs = null;
         Cursor cursor = null;
         SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
         int uriMatch = sUriMatcher.match(uri);
@@ -158,13 +161,26 @@ public class DevLogProvider extends ContentProvider {
             case PROJECTS_EXPANDED:
                 cursor = projectsExpandedQuery(db, projection, selection, selectionArgs, sortOrder);
                 break;
+            case COURSES_ROW:
+                rowId = ContentUris.parseId(uri);
+                rowSelection = CourseInfoEntry._ID + " = ?";
+                rowSelectionArgs = new String[]{Long.toString(rowId)};
+                cursor = db.query(CourseInfoEntry.TABLE_NAME, projection, rowSelection,
+                        rowSelectionArgs, null, null, null);
+                break;
             case PROJECTS_ROW:
-                long rowId = ContentUris.parseId(uri);
-                String rowSelection = ProjectInfoEntry._ID + " = ?";
-                String[] rowSelectionArgs = new String[]{Long.toString(rowId)};
-                cursor = db.query(ProjectInfoEntry.TABLE_NAME, projection,
-                        rowSelection, rowSelectionArgs, null, null, null);
-
+                rowId = ContentUris.parseId(uri);
+                rowSelection = ProjectInfoEntry._ID + " = ?";
+                rowSelectionArgs = new String[]{Long.toString(rowId)};
+                cursor = db.query(ProjectInfoEntry.TABLE_NAME, projection, rowSelection,
+                        rowSelectionArgs, null, null, null);
+                break;
+            case PROJECTS_EXPANDED_ROW:
+                rowId = ContentUris.parseId(uri);
+                rowSelection = ProjectInfoEntry.getQName(ProjectInfoEntry._ID) + " = ?";
+                rowSelectionArgs = new String[]{Long.toString(rowId)};
+                cursor = projectsExpandedQuery(db, projection, rowSelection, rowSelectionArgs, null);
+                break;
         }
 
         return cursor;
