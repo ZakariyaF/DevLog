@@ -42,7 +42,7 @@ public class ProjectReminderNotification {
      *
      * @see #cancel(Context)
      */
-    public static void notify(final Context context,
+    public static void notify(final Context context, final String projectTitle,
                               final String projectText) {
         final Resources res = context.getResources();
 
@@ -74,6 +74,12 @@ public class ProjectReminderNotification {
 
                 // Set ticker text (preview) information for this notification.
                 .setTicker(context.getString(R.string.review_project))
+
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(projectText)
+                        .setBigContentTitle(projectTitle)
+                        .setSummaryText(context.getString(R.string.review_project))
+                )
 
                 // If this notification relates to a past or upcoming event, you
                 // should set the relevant time information using the setWhen
