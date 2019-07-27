@@ -226,9 +226,6 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void saveProjectToDatabase(String courseId, String projectTitle, String projectText) {
-        final String selection = ProjectInfoEntry._ID + " = ?";
-        final String[] selectionsArgs = {Integer.toString(mProjectID)};
-
         final ContentValues values = new ContentValues();
         values.put(Projects.COLUMN_COURSE_ID, courseId);
         values.put(Projects.COLUMN_PROJECT_TITLE, projectTitle);
@@ -237,8 +234,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-                db.update(ProjectInfoEntry.TABLE_NAME, values, selection, selectionsArgs);
+                getContentResolver().update(mProjectUri, values, null, null);
                 return null;
             }
         };
