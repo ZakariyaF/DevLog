@@ -295,17 +295,25 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void createNewProject() {
+        AsyncTask<ContentValues, Void, Uri> task = new AsyncTask<ContentValues, Void, Uri>() {
+            @Override
+            protected Uri doInBackground(ContentValues... contentValues) {
+                ContentValues insertValues = contentValues[0];
+                return getContentResolver().insert(Projects.CONTENT_URI, insertValues);
+            }
+
+            @Override
+            protected void onPostExecute(Uri uri) {
+                mProjectUri = uri;
+            }
+        };
         final ContentValues values = new ContentValues();
         values.put(Projects.COLUMN_COURSE_ID, "");
         values.put(Projects.COLUMN_PROJECT_TITLE, "");
         values.put(Projects.COLUMN_PROJECT_TEXT, "");
-        new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                mProjectUri = getContentResolver().insert(Projects.CONTENT_URI, values);
-                return null;
-            }
-        }.execute();
+
+        task.execute(values);
+
 
     }
 
