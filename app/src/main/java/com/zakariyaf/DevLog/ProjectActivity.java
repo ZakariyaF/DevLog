@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
@@ -295,16 +296,35 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void createNewProject() {
-        AsyncTask<ContentValues, Void, Uri> task = new AsyncTask<ContentValues, Void, Uri>() {
+        AsyncTask<ContentValues, Integer, Uri> task = new AsyncTask<ContentValues, Integer, Uri>() {
+            private ProgressBar mProgressBar;
+
+            @Override
+            protected void onPreExecute() {
+                mProgressBar = findViewById(R.id.progress_bar);
+                mProgressBar.setVisibility(View.VISIBLE);
+            }
+
             @Override
             protected Uri doInBackground(ContentValues... contentValues) {
+                publishProgress(1);
                 ContentValues insertValues = contentValues[0];
-                return getContentResolver().insert(Projects.CONTENT_URI, insertValues);
+                publishProgress(2);
+                Uri rowUri = getContentResolver().insert(Projects.CONTENT_URI, insertValues);
+                publishProgress(3);
+                return rowUri;
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                int progressValue = values[0];
+                mProgressBar.setProgress(progressValue);
             }
 
             @Override
             protected void onPostExecute(Uri uri) {
                 mProjectUri = uri;
+                mProgressBar.setVisibility(View.GONE);
             }
         };
         final ContentValues values = new ContentValues();
