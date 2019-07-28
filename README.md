@@ -23,4 +23,5 @@ Project is: _in progress_
 * Basic app skeleton...:heavy_check_mark:
 * Implementing SQLite data persistence...:heavy_check_mark:
 * Implementing Content Providers...:heavy_check_mark:
-* Adding Notifications...:hourglass_flowing_sand:
+* Adding Notifications...:heavy_check_mark:
+* Improve threading operations & general performance...:hourglass_flowing_sand:
