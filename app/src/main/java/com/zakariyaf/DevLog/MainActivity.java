@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         initializeDisplayContent();
+        
+        openDrawer();
     }
 
     private void enableStrictMode() {
@@ -98,11 +100,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         LoaderManager.getInstance(this).restartLoader(LOADER_PROJECTS, null, this);
         updateNavHeader();
-        openDrawer();
     }
 
     private void openDrawer() {
