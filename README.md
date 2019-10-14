@@ -11,7 +11,6 @@
 
 ## General info
 A simple Android application to keep track of developers' courses and projects.
-Add, modify and save your course and/or project progress easily!
 
 ## Screenshots
 ![Example screenshot 1](./img/screenshot_1.png)
@@ -21,7 +20,9 @@ Add, modify and save your course and/or project progress easily!
 ## Status
 Project is: _in progress_
 * Basic app skeleton...:heavy_check_mark:
-* Implementing SQLite data persistence...:heavy_check_mark:
-* Implementing Content Providers...:heavy_check_mark:
+* Implement SQLite data persistence...:heavy_check_mark:
+* Implement Content Providers...:heavy_check_mark:
 * Adding Notifications...:heavy_check_mark:
 * Improve threading operations & general performance...:hourglass_flowing_sand:
+* Implement Firebase login...:hourglass_flowing_sand:
+* Apply app development best practices...:hourglass_flowing_sand:
