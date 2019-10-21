@@ -18,7 +18,7 @@ A simple Android application to keep track of developers' courses and projects.
 ![Example screenshot 3](./img/screenshot_3.png)
 
 ## Status
-Project is: _in progress_
+Project is: _paused_
 * Basic app skeleton...:heavy_check_mark:
 * Implement SQLite data persistence...:heavy_check_mark:
 * Implement Content Providers...:heavy_check_mark:
